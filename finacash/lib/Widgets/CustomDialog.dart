@@ -1,12 +1,10 @@
-import 'package:finacash/Helper/Movimentacoes_helper.dart';
-import 'package:finacash/screen/HomePage.dart';
-import 'package:finacash/screen/InicialPage.dart';
+import 'package:finacash/Helper/Movements_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CustomDialog extends StatefulWidget {
 
-  final Movimentacoes mov;
+  final Movements mov;
   const CustomDialog({Key key, this.mov}) : super(key: key);
 
   @override
@@ -23,25 +21,24 @@ class _CustomDialogState extends State<CustomDialog> {
   TextEditingController _controllerValor = TextEditingController();
   TextEditingController _controllerDesc = TextEditingController();
 
-  MovimentacoesHelper _movHelper = MovimentacoesHelper();
+  MovementsHelper _movHelper = MovementsHelper();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     if(widget.mov != null){
       print(widget.mov.toString());
 
       edit = true;
-      if(widget.mov.tipo == "d"){ 
+      if(widget.mov.type == "d"){
         _groupValueRadio =2;
         _colorContainer = Colors.red[300];
         _colorTextButtom = Colors.red[300];
         }
       
-      _controllerValor.text = widget.mov.valor.toString().replaceAll("-", "");
-      _controllerDesc.text = widget.mov.descricao;
+      _controllerValor.text = widget.mov.value.toString().replaceAll("-", "");
+      _controllerDesc.text = widget.mov.description;
     }else{
       edit = false;
     }
@@ -55,7 +52,7 @@ class _CustomDialogState extends State<CustomDialog> {
     return AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(width * 0.050)),
         title: Text(
-          "Adicionar Valores",
+          "Add Values",
           textAlign: TextAlign.center,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
@@ -67,7 +64,7 @@ class _CustomDialogState extends State<CustomDialog> {
               Row(
                 children: <Widget>[
                   Text(
-                    "R\$ ",
+                    "RM",
                     style:
                         TextStyle(color: Colors.white, fontSize: width * 0.06),
                   ),
@@ -123,7 +120,7 @@ class _CustomDialogState extends State<CustomDialog> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: width * 0.01),
-                    child: Text("receita"),
+                    child: Text("Recipe"),
                   )
                 ],
               ),
@@ -144,7 +141,7 @@ class _CustomDialogState extends State<CustomDialog> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: width * 0.01),
-                    child: Text("despesa"),
+                    child: Text("Expense"),
                   )
                 ],
               ),
@@ -156,10 +153,8 @@ class _CustomDialogState extends State<CustomDialog> {
                   maxLines: 1,
                   textAlign: TextAlign.start,
                   decoration: new InputDecoration(
-                    //hintText: "descrição",
-                    labelText: "Descrição",
+                    labelText: "Description",
                     labelStyle: TextStyle(color: Colors.white54),
-                    //hintStyle: TextStyle(color: Colors.grey[400]),
                     contentPadding:  EdgeInsets.only(
                         left: width * 0.04, 
                         top: width * 0.041, 
@@ -191,7 +186,7 @@ class _CustomDialogState extends State<CustomDialog> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        "Cancelar",
+                        "Cancel",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -199,29 +194,29 @@ class _CustomDialogState extends State<CustomDialog> {
                       onTap: (){
                         
                         if(_controllerValor.text.isNotEmpty && _controllerDesc.text.isNotEmpty){
-                          Movimentacoes mov = Movimentacoes();
-                          String valor;
+                          Movements mov = Movements();
+                          String value;
                           if(_controllerValor.text.contains(",")){
-                             valor = _controllerValor.text.replaceAll( RegExp(","), ".");
+                             value = _controllerValor.text.replaceAll( RegExp(","), ".");
                             }else{
-                              valor = _controllerValor.text; 
+                              value = _controllerValor.text;
                             }
 
                           mov.data = formatter.format(DateTime.now());
-                          mov.descricao = _controllerDesc.text;
+                          mov.description = _controllerDesc.text;
                           
                           if(_groupValueRadio == 1){
                             
-                            mov.valor = double.parse(valor);
-                            mov.tipo ="r";
+                            mov.value = double.parse(value);
+                            mov.type ="r";
                             if(widget.mov != null){ mov.id = widget.mov.id;}
-                            edit == false ? _movHelper.saveMovimentacao(mov) : _movHelper.updateMovimentacao(mov);
+                            edit == false ? _movHelper.saveMovements(mov) : _movHelper.updateMovements(mov);
                           }
                           if(_groupValueRadio == 2){
-                            mov.valor = double.parse("-" + valor);
-                            mov.tipo ="d";
+                            mov.value = double.parse("-" + value);
+                            mov.type ="d";
                             if(widget.mov != null){ mov.id = widget.mov.id;}
-                            edit == false ? _movHelper.saveMovimentacao(mov) : _movHelper.updateMovimentacao(mov);
+                            edit == false ? _movHelper.saveMovements(mov) : _movHelper.updateMovements(mov);
                           }
                           Navigator.pop(context);
                           //initState();
@@ -239,7 +234,7 @@ class _CustomDialogState extends State<CustomDialog> {
                         ),
                         child: Center(
                           child: Text(
-                            edit == false ?"Confirmar" : "Editar",
+                            edit == false ?"Confirm" : "Edit",
                             style: TextStyle(
                                 color: _colorTextButtom,
                                 fontWeight: FontWeight.bold,

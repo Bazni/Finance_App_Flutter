@@ -1,33 +1,31 @@
-import 'package:finacash/Helper/Movimentacoes_helper.dart';
+import 'package:finacash/Helper/Movements_helper.dart';
 import 'package:finacash/Widgets/TimeLineItem.dart';
 import 'package:flutter/material.dart';
 
-class ReceitasResumo extends StatefulWidget {
+class RecipesSummary extends StatefulWidget {
   @override
-  _ReceitasResumoState createState() => _ReceitasResumoState();
+  _RecipesSummaryState createState() => _RecipesSummaryState();
 }
 
-class _ReceitasResumoState extends State<ReceitasResumo> {
+class _RecipesSummaryState extends State<RecipesSummary> {
 
-  MovimentacoesHelper movimentacoesHelper = MovimentacoesHelper();
-  List<Movimentacoes> listmovimentacoes = List();
+  MovementsHelper movementsHelper = MovementsHelper();
+  List<Movements> listMovements = List();
 
   _allMovPorTipo() {
-    movimentacoesHelper.getAllMovimentacoesPorTipo("r").then((list) {
+    movementsHelper.getAllMovementsByType("r").then((list) {
       setState(() {
-        listmovimentacoes = list;
+        listMovements = list;
       });
-      print("All Mov: $listmovimentacoes");
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _allMovPorTipo();
   }
-  
+
   @override
   Widget build(BuildContext context) {
 
@@ -43,12 +41,13 @@ class _ReceitasResumoState extends State<ReceitasResumo> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(left: width * 0.05,top: width * 0.2),
-              child: Text("Receitas",style: TextStyle(
-                color: Colors.white ,//Colors.grey[400],
-                fontWeight: FontWeight.bold,
-                fontSize: width * 0.08
-              ),),
-              
+              child: Text("Recipes",
+                style: TextStyle(
+                    color: Colors.white ,
+                    fontWeight: FontWeight.bold,
+                    fontSize: width * 0.08
+                ),
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(left: width * 0.03, top: width * 0.08),
@@ -56,28 +55,23 @@ class _ReceitasResumoState extends State<ReceitasResumo> {
                 width: width,
                 height: height * 0.74,
                 child: ListView.builder(
-                  itemCount: listmovimentacoes.length,
+                  itemCount: listMovements.length,
                   itemBuilder: (context, index){
-                    List movReverse = listmovimentacoes.reversed.toList();
-                    Movimentacoes mov = movReverse[index];
-
-                    
-                    if(movReverse[index] == movReverse.last){
+                    List movReverse = listMovements.reversed.toList();
+                    Movements mov = movReverse[index];
+                    if (movReverse[index] == movReverse.last) {
                       return TimeLineItem(mov: mov, colorItem: Colors.green[900],isLast: true,);
-                    }else{
+                    }else {
                       return TimeLineItem(mov: mov,colorItem: Colors.green[900],isLast: false,);
                     }
-                    
                   },
                 ),
               ),
-              
             ),
-            
           ],
         ),
       ),
-      
+
     );
   }
 }

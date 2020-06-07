@@ -1,8 +1,8 @@
-import 'package:finacash/Helper/Movimentacoes_helper.dart';
+import 'package:finacash/Helper/Movements_helper.dart';
 import 'package:flutter/material.dart';
 
 class TimeLineItem extends StatelessWidget {
-  final Movimentacoes mov; 
+  final Movements mov;
   final bool isLast;
   final Color colorItem;
 
@@ -54,7 +54,7 @@ class TimeLineItem extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: width * 0.05),
                     child: Text(
-                      mov.descricao,
+                      mov.description,
                       style: TextStyle(
                           color: Colors.white, fontSize: width * 0.05,),
                     ),
@@ -76,9 +76,7 @@ class TimeLineItem extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(right: width * 0.05),
-            child: Text(mov.tipo == "r" ? "+ ${mov.valor}" :" ${mov.valor}",
-              
-              
+            child: Text(mov.type == "r" ? "+ ${mov.value}" :" ${mov.value}",
               textAlign: TextAlign.end,
               style: TextStyle(
                 color: Colors.white,

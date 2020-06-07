@@ -1,31 +1,29 @@
-import 'package:finacash/Helper/Movimentacoes_helper.dart';
+import 'package:finacash/Helper/Movements_helper.dart';
 import 'package:finacash/Widgets/TimeLineItem.dart';
 import 'package:flutter/material.dart';
 
 
-class DespesasResumo extends StatefulWidget {
+class ExpensesSummary extends StatefulWidget {
   @override
-  _DespesasResumoState createState() => _DespesasResumoState();
+  _ExpensesSummaryState createState() => _ExpensesSummaryState();
 }
 
-class _DespesasResumoState extends State<DespesasResumo> {
-  MovimentacoesHelper movimentacoesHelper = MovimentacoesHelper();
-  List<Movimentacoes> listmovimentacoes = List();
+class _ExpensesSummaryState extends State<ExpensesSummary> {
+  MovementsHelper movementsHelper = MovementsHelper();
+  List<Movements> listMovements = List();
 
-  _allMovPorTipo() {
-    movimentacoesHelper.getAllMovimentacoesPorTipo("d").then((list) {
+  _allMov() {
+    movementsHelper.getAllMovementsByType("d").then((list) {
       setState(() {
-        listmovimentacoes = list;
+        listMovements = list;
       });
-      print("All Mov: $listmovimentacoes");
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _allMovPorTipo();
+    _allMov();
   }
 
   @override
@@ -43,12 +41,13 @@ class _DespesasResumoState extends State<DespesasResumo> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(left: width * 0.05,top: width * 0.2),
-              child: Text("Despesas",style: TextStyle(
-                color: Colors.white ,//Colors.grey[400],
-                fontWeight: FontWeight.bold,
-                fontSize: width * 0.08
-              ),),
-              
+              child: Text("Expenses",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: width * 0.08
+                ),
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(left: width * 0.03, top: width * 0.08),
@@ -56,23 +55,19 @@ class _DespesasResumoState extends State<DespesasResumo> {
                 width: width,
                 height: height * 0.74,
                 child: ListView.builder(
-                  itemCount: listmovimentacoes.length,
+                  itemCount: listMovements.length,
                   itemBuilder: (context, index){
-                    List movReverse = listmovimentacoes.reversed.toList();
-                    Movimentacoes mov = movReverse[index];
-                    
-                    if(movReverse[index] == movReverse.last){
+                    List movReverse = listMovements.reversed.toList();
+                    Movements mov = movReverse[index];
+                    if (movReverse[index] == movReverse.last) {
                       return TimeLineItem(mov: mov, colorItem: Colors.red[900],isLast: true,);
-                    }else{
+                    } else {
                       return TimeLineItem(mov: mov,colorItem: Colors.red[900],isLast: false,);
                     }
-                    
                   },
                 ),
               ),
-              
             ),
-            
           ],
         ),
       ),

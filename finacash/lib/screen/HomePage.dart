@@ -1,8 +1,7 @@
 import 'dart:ui';
 
-import 'package:finacash/Helper/Movimentacoes_helper.dart';
-import 'package:finacash/Widgets/AnimatedBottomNavBar.dart';
-import 'package:finacash/Widgets/CardMovimentacoesItem.dart';
+import 'package:finacash/Helper/Movements_helper.dart';
+import 'package:finacash/Widgets/CardMovementItem.dart';
 import 'package:finacash/Widgets/CustomDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,36 +17,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String saldoAtual = "";
+  String currentBalance = "";
   var total;
   var width;
   var height;
   bool recDesp = false;
   final GlobalKey<ScaffoldState> _scafoldKey = GlobalKey<ScaffoldState>();
-  MovimentacoesHelper movHelper = MovimentacoesHelper();
-  TextEditingController _valorController = TextEditingController();
+  MovementsHelper movHelper = MovementsHelper();
+  //TextEditingController _valueController = TextEditingController();
   CalendarController calendarController;
-  MovimentacoesHelper movimentacoesHelper = MovimentacoesHelper();
-  List<Movimentacoes> listmovimentacoes = List();
-  List<Movimentacoes> ultimaTarefaRemovida = List();
+  MovementsHelper movementsHelper = MovementsHelper();
+  List<Movements> listMovements = List();
 
-  var dataAtual = new DateTime.now();
+  var currentDate = new DateTime.now();
   var formatter = new DateFormat('dd-MM-yyyy');
   var formatterCalendar = new DateFormat('MM-yyyy');
-  String dataFormatada;
+  String dateFormatted;
 
   String format(double n) {
     return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
   }
 
-  _addValor() {
-    String valor = _valorController.text;
-    setState(() {
-      saldoAtual = valor;
-    });
-  }
-
-  _saldoTamanho(String conteudo) {
+  _balanceSize(String conteudo) {
     if (conteudo.length > 8) {
       return width * 0.08;
     } else {
@@ -55,65 +46,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _salvar() {
-    dataFormatada = formatter.format(dataAtual);
-    Movimentacoes mov = Movimentacoes();
-    mov.valor = 20.50;
-    mov.tipo = "r";
-    mov.data = "10-03-2020"; //dataFormatada;
-    mov.descricao = "CashBack";
-    MovimentacoesHelper movimentacoesHelper = MovimentacoesHelper();
-    movimentacoesHelper.saveMovimentacao(mov);
-    mov.toString();
-  }
-
-  _allMov() {
-    movimentacoesHelper.getAllMovimentacoes().then((list) {
-      setState(() {
-        listmovimentacoes = list;
-      });
-      print("All Mov: $listmovimentacoes");
-    });
-  }
-
   _allMovMes(String data) {
-    movimentacoesHelper.getAllMovimentacoesPorMes(data).then((list) {
+    movementsHelper.getAllMovementsByMes(data).then((list) {
       if (list.isNotEmpty) {
         setState(() {
-          listmovimentacoes = list;
-          //total =listmovimentacoes.map((item) => item.valor).reduce((a, b) => a + b);
+          listMovements = list;
         });
         total =
-            listmovimentacoes.map((item) => item.valor).reduce((a, b) => a + b);
-        saldoAtual = format(total).toString();
+            listMovements.map((item) => item.value).reduce((a, b) => a + b);
+        currentBalance = format(total).toString();
       } else {
         setState(() {
-          listmovimentacoes.clear();
+          listMovements.clear();
           total = 0;
-          saldoAtual = total.toString();
+          currentBalance = total.toString();
         });
       }
-
-      //print("TOTAL: $total");
-      //print("All MovMES: $listmovimentacoes");
     });
   }
 
-  
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     calendarController = CalendarController();
     if (DateTime.now().month != false) {
-      //saldoAtual = "1259";
     }
-    //_salvar();
-    dataFormatada = formatterCalendar.format(dataAtual);
-    print(dataFormatada);
-    _allMovMes(dataFormatada);
-
-    //_allMov();
+    dateFormatted = formatterCalendar.format(currentDate);
+    _allMovMes(dateFormatted);
   }
 
   _dialogAddRecDesp() {
@@ -129,22 +89,19 @@ class _HomePageState extends State<HomePage> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    _allMovMes(dataFormatada);
+    _allMovMes(dateFormatted);
     return Scaffold(
       key: _scafoldKey,
       body: SingleChildScrollView(
         primary: false,
         physics: NeverScrollableScrollPhysics(),
-        //physics: ClampingScrollPhysics(),
-        //height: height,
-        //width: width,
         child: Column(
           children: <Widget>[
             Stack(
               children: <Widget>[
                 Container(
                   width: double.infinity,
-                  height: height * 0.334, //300,
+                  height: height * 0.334,
                   color: Colors.white,
                 ),
                 Positioned(
@@ -153,28 +110,28 @@ class _HomePageState extends State<HomePage> {
                   right: 0,
                   child: Container(
                       width: double.infinity,
-                      height: height * 0.28, //250,
+                      height: height * 0.28,
                       decoration: BoxDecoration(
-                        color: Colors.lightBlue[700], //Colors.indigo[400],
-                      )),
+                        color: Colors.lightBlue[700],
+                      )
+                  ),
                 ),
                 Positioned(
-                  top: width * 0.18, //70
-                  left: width * 0.07, //30,
+                  top: width * 0.18,
+                  left: width * 0.07,
                   child: Text(
-                    "FinaCash",
+                    "Argent",
                     style: TextStyle(
-                        color: Colors.white, fontSize: width * 0.074 //30
-                        ),
+                        color: Colors.white, fontSize: width * 0.07),
                   ),
                 ),
                 Positioned(
                   bottom: 0,
-                  left: width * 0.07, // 30,
-                  right: width * 0.07, // 30,
+                  left: width * 0.07,
+                  right: width * 0.07,
                   child: Container(
-                    height: height * 0.16, //150,
-                    width: width * 0.1, // 70,
+                    height: height * 0.16,
+                    width: width * 0.1,
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
@@ -210,18 +167,17 @@ class _HomePageState extends State<HomePage> {
                               padding: EdgeInsets.only(left: width * 0.05),
                               child: Container(
                                 width: width * 0.6,
-                                
+
                                 child: Text(
-                                saldoAtual,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
+                                  currentBalance,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
                                     color: Colors
-                                        .lightBlue[700], //Colors.indigo[400],
+                                        .lightBlue[700],
                                     fontWeight: FontWeight.bold,
-                                    fontSize: _saldoTamanho(saldoAtual),
-                                        //width * 0.1 //_saldoTamanho(saldoAtual)
-                                    ),
-                              ),
+                                    fontSize: _balanceSize(currentBalance),
+                                  ),
+                                ),
                               ),
                             ),
                             Padding(
@@ -229,18 +185,13 @@ class _HomePageState extends State<HomePage> {
                               child: GestureDetector(
                                 onTap: () {
                                   _dialogAddRecDesp();
-                                  /* Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AddReceita()));
-                                 */
                                 },
                                 child: Container(
                                   width: width * 0.12,
-                                  height: width * 0.12, //65,
+                                  height: width * 0.12,
                                   decoration: BoxDecoration(
                                       color: Colors
-                                          .lightBlue[700], //Colors.indigo[400],
+                                          .lightBlue[700],
                                       borderRadius: BorderRadius.circular(50),
                                       boxShadow: [
                                         BoxShadow(
@@ -270,7 +221,7 @@ class _HomePageState extends State<HomePage> {
             ),
             TableCalendar(
               calendarController: calendarController,
-              locale: "pt_BR",
+              locale: "en_en",
               headerStyle: HeaderStyle(
                 formatButtonShowsNext: false,
                 formatButtonVisible: false,
@@ -284,26 +235,22 @@ class _HomePageState extends State<HomePage> {
               rowHeight: 0,
               initialCalendarFormat: CalendarFormat.month,
               onVisibleDaysChanged: (dateFirst, dateLast, CalendarFormat cf) {
-                print(dateFirst);
-
-                dataFormatada = formatterCalendar.format(dateFirst);
-                _allMovMes(dataFormatada);
-
-                print("DATA FORMATADA CALENDAR $dataFormatada");
-
-                //print("Data Inicial: $dateFirst ....... Data Final: $dateLast");
+                dateFormatted = formatterCalendar.format(dateFirst);
+                _allMovMes(dateFormatted);
               },
             ),
             Padding(
                 padding:
-                    EdgeInsets.only(left: width * 0.04, right: width * 0.04),
+                EdgeInsets.only(left: width * 0.04, right: width * 0.04),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Movimentações",
-                      style: TextStyle(
-                          color: Colors.grey[600], fontSize: width * 0.04),
+                        "Movements",
+                        style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: width * 0.04
+                        )
                     ),
                     Padding(
                       padding: EdgeInsets.only(right: width * 0.02),
@@ -314,7 +261,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                     )
                   ],
-                )),
+                )
+            ),
             Padding(
               padding: EdgeInsets.only(
                   left: width * 0.04, right: width * 0.04, top: 0),
@@ -322,29 +270,26 @@ class _HomePageState extends State<HomePage> {
                 width: width,
                 height: height * 0.47,
                 child: ListView.builder(
-                  itemCount: listmovimentacoes.length,
+                  itemCount: listMovements.length,
                   itemBuilder: (context, index) {
-                    Movimentacoes mov = listmovimentacoes[index];
-                    Movimentacoes ultMov = listmovimentacoes[index];
+                    Movements mov = listMovements[index];
+                    Movements ultMov = listMovements[index];
                     return Dismissible(
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        //_dialogConfimacao(context, width, mov,index);
-
                         setState(() {
-                          listmovimentacoes.removeAt(index);
+                          listMovements.removeAt(index);
                         });
-                        movHelper.deleteMovimentacao(mov);
+                        movHelper.deleteMovements(mov);
                         final snackBar = SnackBar(
                           content: Container(
                             padding: EdgeInsets.only(bottom: width * 0.025),
                             alignment: Alignment.bottomLeft,
                             height: height * 0.05,
                             child: Text(
-                              "Desfazer Ação",
+                              "Movement Deleted",
                               style: TextStyle(
                                   color: Colors.white,
-                                  //fontWeight: FontWeight.bold,
                                   fontSize: width * 0.05),
                             ),
                           ),
@@ -353,16 +298,16 @@ class _HomePageState extends State<HomePage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15))),
+                                  topRight: Radius.circular(15))
+                          ),
                           action: SnackBarAction(
-                            label: "Desfazer",
+                            label: "Undo",
                             textColor: Colors.white,
                             onPressed: () {
                               setState(() {
-                                listmovimentacoes.insert(index, ultMov);
+                                listMovements.insert(index, ultMov);
                               });
-
-                              movHelper.saveMovimentacao(ultMov);
+                              movHelper.saveMovements(ultMov);
                             },
                           ),
                         );
@@ -379,9 +324,9 @@ class _HomePageState extends State<HomePage> {
                           size: width * 0.07,
                         ),
                       ),
-                      child: CardMovimentacoesItem(
+                      child: CardMovementItem(
                         mov: mov,
-                        lastItem: listmovimentacoes[index] == listmovimentacoes.last? true : false,
+                        lastItem: listMovements[index] == listMovements.last? true : false,
                       ),
                     );
                   },
@@ -390,7 +335,7 @@ class _HomePageState extends State<HomePage> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 20),
-              child: Text( "EEEEEEEEE"),
+              child: Text("EEEEEEEEE"),
             )
           ],
         ),
